@@ -968,151 +968,182 @@ def get_clilicalReport(request):
 
 
 
-
-
-
 @api_view(['GET'])
 def get_mocular_profile(request):
-    with open('/home/aravind/Desktop/cnvkits/moculardata1.json','r') as j:
+    
+    fda_path = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder')
+    print(fda_path)
+
+    for files in os.listdir(fda_path):
+        if files.startswith('fda_output_files.xlsx'):
+            print(files)
+            fda_files_path = os.path.join(fda_path, files)
+            print(fda_files_path)
+    df_fda = pd.read_excel(fda_files_path, sheet_name='Sheet1')
+    df_fda.drop(['Unnamed: 0'], axis=1, inplace=True)
+    df_fda.reset_index(drop=True, inplace=True)
+    print(df_fda)
+    
+    Molecular_path = Path.joinpath(
+        Path(MEDIA_ROOT), 'Files_folder', 'Molecular_profile')
+    print(Molecular_path)
+   
+
+  
+    for files in os.listdir(Molecular_path):
+        if files.endswith('profile.xlsx'):
+            molecular_file = files
+            molecular_path = str(Molecular_path) + "/" + str(molecular_file)
+            break
+
+    
+    df_gene= pd.read_excel(molecular_path,sheet_name='GENE VARIANTS')
+    df_gene.loc[(df_gene['Gene'].isin(df_fda['GENE'])) &(df_gene['Variant'].isin(df_fda['VARIANT']))]
+    
+    df_values= df_gene.loc[(df_gene['Gene'].isin(df_fda['GENE'])) &(df_gene['Variant'].isin(df_fda['VARIANT']))]
+    df_values.reset_index(drop=True,inplace=True)
+    df_values['Profile']= df_values['Gene'].str.cat(df_values['Variant'], sep ="(")+")"
+    df_values.to_excel('mocular_profile.xlsx')
+    print(df_values)
+
+    df_values.drop([
+        'Associated with drug Resistance'
+        
+    ],axis=1, inplace=True)
+    
+    
+    
+    output_molecular_file = os.path.join(Molecular_path, 'molecular_file_results.json')
+
+    with open(output_molecular_file, 'w') as f:
+        json.dump(df_values.to_dict(orient='records'), f)
+
+    time.sleep(10)
+    with open(output_molecular_file, 'r') as j:
         files = json.loads(j.read())
     return Response(files)
 
 
-
-
-
-
-# @api_view(['GET'])
-# def get_latest_patient_portal(request):
-   
-#     queryset= PatientPortal.objects.all()
-#     print(queryset)
-#     return Response(queryset)
-   
 @api_view(["GET"])
-def fad_sheet_filters(request): 
-   
-    
+def fad_sheet_filters(request):
+
     res = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder')
     result = os.listdir(res)
-    
+
     fda_sheet = Path.joinpath(
-        Path(MEDIA_ROOT), 'Files_folder', "fda_output_files" )
+        Path(MEDIA_ROOT), 'Files_folder', "fda_output_files")
     os.makedirs(fda_sheet, exist_ok=True)
-    
-    
+
+    input_file_path_AF_VAF_inclusion = Path.joinpath(
+        Path(MEDIA_ROOT), 'Files_folder', 'CRCM')
+    AF_files = os.listdir(input_file_path_AF_VAF_inclusion)
 
     for files in result:
         if files.startswith("FDA_Master"):
             fda_file = files
             fda_path = str(res) + "/" + str(fda_file)
+            print(fda_path)
             break
     for files in result:
         if files.endswith("_N_FOR_LIST_Report.xlsx"):
             CRCM_files = files
             crcm_path = str(res) + "/" + str(CRCM_files)
+            print(crcm_path)
             break
-    
+
+    for files in AF_files:
+        if files.endswith('_EES_PASS.xlsx'):
+            af_vaf = files
+            af_path = str(input_file_path_AF_VAF_inclusion) + '/' + str(af_vaf)
+            print(af_path)
+            break
     df_fda = pd.read_excel(fda_path, sheet_name="FDA+FDA CDx_SNVGT")
-    df_patient_data= pd.read_excel(crcm_path,sheet_name='Source')
+    df_patient_data = pd.read_excel(crcm_path, sheet_name='Source')
+    df_af_data = pd.read_excel(af_path, sheet_name='Sheet1')
 
-    df_fda['Status']= np.where((df_fda["GENE"].isin(df_patient_data["Gene.refGene"]) &(df_fda["PSEUDOVARIANT"].isin(df_patient_data["AAChange"]))), 'Positive', 'Negative')
-    df_filtered=df_fda
+    df_new_file = df_patient_data.loc[(df_patient_data['Chr'].isin(df_af_data['Chr'])) & (
+        df_patient_data['Start'].isin(df_af_data['Start'])) & (df_patient_data['End'].isin(df_af_data['End']))]
 
-    result = df_filtered.loc[(df_filtered['GENE'].isin(df_patient_data['Gene.refGene'])) &(df_filtered['PSEUDOVARIANT'].isin(df_patient_data['AAChange']))]
-    df_cd = pd.merge(result, df_patient_data, how='inner', left_on = 'VARIANT', right_on = 'AAChange')
+    df_new_data = pd.merge(df_new_file, df_af_data, how='inner', left_on=[
+                           'Chr', 'Start', 'End'], right_on=['Chr', 'Start', 'End'])
 
-    df_cd.drop(['Chr', 'Start_y',
-        'End', 'Ref', 'Alt', 'Gene.refGene', 'AAChange', 'AAChange_CDS',
-        'fathmm-MKL_coding_score', 'cosmic_id', 'Report_Decision', 'Otherinfo1',
-        'Otherinfo2', 'Otherinfo3', 'Otherinfo4', 'Otherinfo5', 'Otherinfo6',
-        'Otherinfo7', 'Otherinfo8', 'Otherinfo9', 'Otherinfo10', 'Otherinfo11',
-        'Otherinfo12', 'Otherinfo13', 'DP_Total', 'MQ', 'TLOD',
-        'FractionInformativeReads', 'GT', 'AD','F1R2', 'F2R1',
-        'DP_Sample', 'OBC', 'SB', 'MB', 'PS', 'Gene', '2455_Gene_Source',
-        '2455_Gene_Alias', 'Gene_Alias2'], axis=1, inplace=True)
+    df_new_extract_file = df_new_data[['Chr', 'Start', 'Gene.refGene_x', 'AAChange', 'AAChange_CDS',
+                                       'cosmic_id', 'ExonicFunc.refGene', 'fathmm-MKL_coding_score_x', 'Report_Decision', 'AF_VAF_y']]
 
-# # result['Status']=np.where(df_fda["GENE"].isin(df_patient_data["Gene.refGene"]), True, False)
-    output_file_folder= os.path.join(str(fda_sheet),str(fda_sheet)+'.xlsx')
-    
-    df_cd.drop([ 'VARIANT CDS', 'EXON', 
-        'PSEUDOVARIANT CDS', 'TYPE OF VARIANT', 'COMBINATION MARKER', 
-        'VARIANT ORIGIN', 'ZYGOSITY',
-        'EVIDENCE STATEMENT FROM LABEL',
-            'SIGNIFICANCE', 'LEVELS OF EVIDENCE',
-        'TYPE OF EVIDENCE', 'REMARKS', 'REFERENCES', 'PMID', 'DOID',
-        'Chromosome', 'Start_x', 'Stop', 'Size (kb)', 'Cytoband',
-        'ARCHIVAL NUMBER', 'SOURCE', 'LABEL DATE'], axis=1, inplace=True)
-    
-    df_cd.rename(columns = {'EVIDENCE STATEMENT 1':'EVIDENCE_STATEMENT_1', 'EVIDENCE STATEMENT 2':'EVIDENCE_STATEMENT_2','CANCER TYPE':'CANCER_TYPE'}, inplace = True)
+    df_new_extract_file.rename(columns={'Gene.refGene_x': 'Gene.refGene',
+                               'fathmm-MKL_coding_score_x': 'fathmm-MKL_coding_score', 'AF_VAF_y': 'AF_VAF'}, inplace=True)
+
+    df_fda['Status'] = np.where((df_fda["GENE"].isin(df_new_extract_file["Gene.refGene"]) & (
+        df_fda["PSEUDOVARIANT"].isin(df_new_extract_file["AAChange"]))), 'Positive', 'Negative')
+    df_filtered = df_fda
+    result = df_filtered.loc[(df_filtered['GENE'].isin(df_new_extract_file['Gene.refGene'])) & (
+        df_filtered['PSEUDOVARIANT'].isin(df_new_extract_file['AAChange']))]
+    df_cd = pd.merge(result, df_new_extract_file, how='inner',
+                     left_on='VARIANT', right_on='AAChange')
+    df_cd.drop(['EXON', 'PSEUDOVARIANT',
+                'PSEUDOVARIANT CDS', 'TYPE OF VARIANT', 'COMBINATION MARKER', 'VARIANT ORIGIN', 'ZYGOSITY',
+                'EVIDENCE STATEMENT FROM LABEL', 'SIGNIFICANCE', 'LEVELS OF EVIDENCE',
+                'TYPE OF EVIDENCE', 'REMARKS', 'REFERENCES', 'PMID', 'DOID',
+                'Chromosome', 'Start_x', 'Stop', 'Size (kb)', 'Cytoband',
+                'ARCHIVAL NUMBER', 'SOURCE', 'LABEL DATE',
+                'Chr', 'Start_y', 'Gene.refGene', 'AAChange', 'AAChange_CDS',
+                'cosmic_id', 'ExonicFunc.refGene', 'fathmm-MKL_coding_score',
+                'Report_Decision'], axis=1, inplace=True)
+
+    output_file_folder = os.path.join(str(fda_sheet), str(fda_sheet)+'.xlsx')
+
+    df_cd.rename(columns={'EVIDENCE STATEMENT 1': 'EVIDENCE_STATEMENT_1',
+                 'EVIDENCE STATEMENT 2': 'EVIDENCE_STATEMENT_2', 'CANCER TYPE': 'CANCER_TYPE'}, inplace=True)
     df_files = df_cd['CANCER_TYPE'].values.tolist()
     for i in df_files:
-        result=" ".join(i.split()[2:])
+        result = " ".join(i.split()[2:])
 
-        df_cd['CANCER_TYPES']= result
-        
-    df_cd.drop(['CANCER_TYPE'],axis = 1,inplace=True)
-   
+        df_cd['CANCER_TYPES'] = result
+
+    df_cd.drop(['CANCER_TYPE'], axis=1, inplace=True)
+    print(df_cd)
     df_cd.to_excel(output_file_folder)
     print(df_cd)
-    # time.sleep(10)
-    # for files in result:
-       
-    #     if files.startswith("fda_output_files"):
-    #         fda_output_files = files
-    #         fda_output_path = str(res) + "/" + str(fda_output_files)
-    #         break
-    # time.sleep(5)
-    # fda_path = pd.read_excel(fda_output_path, sheet_name="Sheet1")
+
     time.sleep(5)
-    output_json_file= os.path.join(res,'fda_reports.json') 
-    
+    output_json_file = os.path.join(res, 'fda_reports.json')
+
     with open(output_json_file, 'w') as f:
         json.dump(df_cd.to_dict(orient='records'), f)
-    
+
     time.sleep(10)
-    with open(output_json_file,'r') as j:
+    with open(output_json_file, 'r') as j:
         files = json.loads(j.read())
     return Response(files)
 
-    
-    
-    
 
-   
 @api_view(["GET"])
-def process_clilical_files(request): 
+def process_clilical_files(request):
     res = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder',
                         'clinical_trial_file')
     result = os.listdir(res)
     #================= fad_file_path===========#
-    fda_path= Path.joinpath(Path(MEDIA_ROOT), 'Files_folder')
+    fda_path = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder')
     print(fda_path)
-    
+
     for files in os.listdir(fda_path):
         if files.startswith('fda_output_files.xlsx'):
             print(files)
-            fda_files_path= os.path.join(fda_path,files)
+            fda_files_path = os.path.join(fda_path, files)
             print(fda_files_path)
-    df_fda= pd.read_excel(fda_files_path,sheet_name='Sheet1')
-    df_fda.drop(['Unnamed: 0'],axis=1,inplace=True)
-    df_fda.reset_index(drop=True,inplace=True)
+    df_fda = pd.read_excel(fda_files_path, sheet_name='Sheet1')
+    df_fda.drop(['Unnamed: 0'], axis=1, inplace=True)
+    df_fda.reset_index(drop=True, inplace=True)
     print(df_fda)
 
     for files in result:
-        print(files)
-    abpath = str(res) + "/" + str(files)
-    print(abpath)
-    
-    
-   
-            
-    
-   
-            
-    df= pd.read_excel(abpath)
-   
-    
+        if files.endswith("kgct.xlsx"):
+            kgct_files = files
+            kgct_path = str(res) + "/" + str(kgct_files)
+            break
+    print(kgct_path)
+
+    df = pd.read_excel(kgct_path)
 
     df.drop(['Unnamed: 0','gene_found_in',  'gene_aliases_found', 'variants_found_in', 'role_in_cancer', 'protein_effect', 'impact',
             'associated_with_drug_resistance', 'intervention_other_name', 'intervention_description', 'arm_title',
@@ -1127,93 +1158,182 @@ def process_clilical_files(request):
             'brief_summary', 'detailed_description'], axis=1, inplace=True)
 
 
-    print(df.head(10))
+    df_study_type_filter = df[(df['study_type'] == 'Interventional') | (
+        df['study_type'] == 'Expanded Access')]
 
-    df_study_type_filter=df[(df['study_type'] == 'Interventional') | (df['study_type'] == 'Expanded Access')]
+    df_study_purpose_filter = df_study_type_filter[df_study_type_filter['study_purpose'] == 'Treatment']
 
-    df_study_purpose_filter= df_study_type_filter[df_study_type_filter['study_purpose'] == 'Treatment' ]
+    df_level_filter = df_study_purpose_filter[df_study_type_filter['level'] == '1A']
 
-    df_level_filter= df_study_purpose_filter[df_study_type_filter['level'] == '1A']
-
-    df_recruitment_col_filter=df_level_filter[(df_level_filter['recruitment_status']=='Not yet recruiting')|(df_level_filter['recruitment_status']=='Recruiting') | (df_level_filter['recruitment_status']== 'Enrolling by invitation') | (df_level_filter['recruitment_status']=='Active, not recruiting')]
+    df_recruitment_col_filter = df_level_filter[(df_level_filter['recruitment_status'] == 'Not yet recruiting') | (df_level_filter['recruitment_status'] == 'Recruiting') | (
+        df_level_filter['recruitment_status'] == 'Enrolling by invitation') | (df_level_filter['recruitment_status'] == 'Active, not recruiting')]
     print(df_recruitment_col_filter)
-    Genes= ['EGFR']
-    variants=['l858r']
-    cancer_types= 'Lung Cancer' .lower()
-    df_gene_find= df_recruitment_col_filter[df_recruitment_col_filter['gene_name'].isin(Genes)]
+    Genes = ['EGFR']
+    variants = ['l858r']
+    cancer_types = 'Lung Cancer' .lower()
+    df_gene_find = df_recruitment_col_filter[df_recruitment_col_filter['gene_name'].isin(
+        Genes)]
 
-    df_variant_filter= df_gene_find[df_gene_find['variant_found'].isin(variants)]
+    df_variant_filter = df_gene_find[df_gene_find['variant_found'].isin(
+        variants)]
 
-    df_variant_filter=df_variant_filter.reset_index()
+    df_variant_filter = df_variant_filter.reset_index()
 
+    final_draft = df_variant_filter[df_variant_filter.cancer_type.str.contains(
+        cancer_types, flags=regex.IGNORECASE, regex=True, na=False)]
+    final_draft.reset_index(inplace=True)
+    final_draft.drop(['level_0', 'index'], axis=1, inplace=True)
 
+    final_draft['BioMarker'] = final_draft['gene_name'].str.cat(
+        final_draft['variant_found'], sep=" ")
 
-
-
-    final_draft=df_variant_filter[df_variant_filter.cancer_type.str.contains(cancer_types,flags=regex.IGNORECASE, regex= True, na=False)]
-    final_draft.reset_index(inplace = True)
-    final_draft.drop(['level_0','index'], axis=1, inplace=True)
-
-    final_draft['BioMarker'] = final_draft['gene_name'].str.cat(final_draft['variant_found'], sep =" ")
-
-    final_draft['Reference']  = final_draft[['nct_id', 'phase','recruitment_status']].apply(lambda x: ' | '.join(x), axis = 1)
-
+    final_draft['Reference'] = final_draft[['nct_id', 'phase',
+                                            'recruitment_status']].apply(lambda x: ' | '.join(x), axis=1)
 
     final_draft.drop([
         'gene_id',  'gene_name', 'study_type', 'study_purpose',
-        'study_model', 'recruitment_status', 'phase', 'level', 
+        'study_model', 'recruitment_status', 'phase', 'level',
         'cancer_type',  'drug_found', 'drug_not_found',
         'drug_target', 'drug_target_pathway',
         'variant_match_type', 'curation_status', 'curator',
-        'curator_comments', 'last_update_post_date', 'id', 
-        
-    ],axis=1, inplace=True)
+        'curator_comments', 'last_update_post_date', 'id',
 
-    final_draft['BioMarker']=  final_draft['BioMarker'].str.upper()
-    final_draft['variant_found']= final_draft['variant_found'].str.upper()
-   
-    df_new_data = pd.merge(final_draft, df_fda, how='inner', left_on = 'variant_found', right_on = 'VARIANT')
-   
-    df_final=df_new_data.drop_duplicates(subset='nct_id', keep='last')
-    df_final.reset_index(drop=True,inplace=True)
-    outputfile_kgct= os.path.join(str(res), 'kgct_results.xlsx')
+    ], axis=1, inplace=True)
+
+    final_draft['BioMarker'] = final_draft['BioMarker'].str.upper()
+    final_draft['variant_found'] = final_draft['variant_found'].str.upper()
+
+    df_new_data = pd.merge(final_draft, df_fda, how='inner',
+                           left_on='variant_found', right_on='VARIANT')
+
+    df_final = df_new_data.drop_duplicates(subset='nct_id', keep='last')
+    df_final.reset_index(drop=True, inplace=True)
+    outputfile_kgct = os.path.join(str(res), 'kgct_results.xlsx')
     df_final.to_excel(outputfile_kgct)
     
+    
+    output_clilical_file = os.path.join(res, 'clinical_trails_reports.json')
 
-    return Response('completed')
+    with open(output_clilical_file, 'w') as f:
+        json.dump(df_final.to_dict(orient='records'), f)
+
+    time.sleep(10)
+    with open(output_clilical_file, 'r') as j:
+        files = json.loads(j.read())
+    return Response(files)
+
     
-    
-    
+
+
 @api_view(['GET'])
-def vus_results(result): 
-       
-    with open('/home/aravind/Desktop/DjangoProjects/djangoprojects/media/Files_folder/fda_output_files/snv.json','r') as j:
-        snv_file = json.loads(j.read())
-        
-    with open('/home/aravind/Desktop/DjangoProjects/djangoprojects/media/Files_folder/fda_output_files/indel.json','r') as j:
-        indel_file = json.loads(j.read())
-    
-    return Response({'indel':indel_file, "snv":snv_file})
+def vus_results(result):
+    fda_path = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder')
+    print(fda_path)
+
+    SNV_PATH = Path.joinpath(Path(MEDIA_ROOT), 'Files_folder', 'SV&CNV')
+    print(SNV_PATH)
+
+    Molecular_path = Path.joinpath(
+        Path(MEDIA_ROOT), 'Files_folder', 'Molecular_profile')
+    print(Molecular_path)
+    for files in os.listdir(SNV_PATH):
+        if files.endswith('_N_FOR_LIST_Report.xlsx'):
+            snv_file = files
+            snv_path = str(SNV_PATH) + "/" + str(snv_file)
+            break
+
+    for files in os.listdir(SNV_PATH):
+        if files.endswith('_B_FOR_LIST_Report.xlsx'):
+            indel_file = files
+            indel_path = str(SNV_PATH) + "/" + str(indel_file)
+            break
+    for files in os.listdir(Molecular_path):
+        if files.endswith('profile.xlsx'):
+            molecular_file = files
+            molecular_path = str(Molecular_path) + "/" + str(molecular_file)
+            break
+
+    for files in os.listdir(fda_path):
+        if files.startswith('fda_output_files.xlsx'):
+            print(files)
+            fda_files_path = os.path.join(fda_path, files)
+            print(fda_files_path)
+    df_fda = pd.read_excel(fda_files_path, sheet_name='Sheet1')
+    df_fda.drop(['Unnamed: 0'], axis=1, inplace=True)
+    df_fda.reset_index(drop=True, inplace=True)
+    print(df_fda)
+
+    df_snv = pd.read_excel(snv_path, sheet_name='Cols Sorted')
+    df_snv.rename(columns={'Gene.refGene': 'GENE',
+                  'AAChange': 'AMINO_ACID_CHANGE'}, inplace=True)
+    print(df_snv.columns)
+
+    df_indel = pd.read_excel(indel_path, sheet_name='Cols Sorted')
+    df_indel.rename(columns={'Gene.refGene': 'GENE',
+                    'AAChange': 'AMINO_ACID_CHANGE'}, inplace=True)
+
+    df_molecular_profile = pd.read_excel(
+        molecular_path, sheet_name='GENE VARIANTS')
+
+    # _____________________ SNVFILE________________________________________
+    result_df = df_molecular_profile.loc[(df_molecular_profile['Gene'].isin(
+        df_snv['GENE'])) | (df_molecular_profile['Variant'].isin(df_snv['AMINO_ACID_CHANGE']))]
+
+    result_df['status'] = np.where((result_df["Gene"].isin(df_fda["GENE"]) | (
+        result_df["Variant"].isin(df_fda["VARIANT"]))), 'True', 'False')
+
+    df_True_SNV = result_df.loc[result_df['status'] == 'True']
+
+    df_False_SNV = result_df.loc[result_df['status'] == 'False']
+
+    df_snv['status'] = np.where((df_snv["GENE"].isin(df_True_SNV["Gene"]) | (
+        df_snv['AMINO_ACID_CHANGE'].isin(df_True_SNV["Variant"]))), 'True', 'False')
+
+    df_true_SNV = df_snv.loc[df_snv['status'] == 'True']
+
+    df_false_SNV = df_snv.loc[df_snv['status'] == 'False']
+
+    # _____________________________SNVFILE____________COMpleted________________
+
+    # _________________________iNDEL FILE______________________________
+
+    result_df_indel = df_molecular_profile.loc[(df_molecular_profile['Gene'].isin(
+        df_indel['GENE'])) | (df_molecular_profile['Variant'].isin(df_indel['AMINO_ACID_CHANGE']))]
+
+    result_df_indel['status'] = np.where((result_df_indel["Gene"].isin(df_fda["GENE"]) | (
+        result_df_indel["Variant"].isin(df_fda["VARIANT"]))), 'True', 'False')
+
+    df_True_indel = result_df_indel.loc[result_df_indel['status'] == 'True']
+
+    df_False_indel = result_df_indel.loc[result_df_indel['status'] == 'False']
+
+    df_indel['status'] = np.where((df_indel["GENE"].isin(df_True_indel["Gene"]) | (
+        df_indel['AMINO_ACID_CHANGE'].isin(df_True_indel["Variant"]))), 'True', 'False')
+
+    df_true_indel = df_indel.loc[df_indel['status'] == 'True']
+
+    df_false_indel = df_indel.loc[df_indel['status'] == 'False']
+
+    # ____________________indelfile_______completed_____________
+
+    output_snv_file = os.path.join(Molecular_path, 'SNV.json')
+    output_indel_file = os.path.join(Molecular_path, 'INDEL.json')
+
+    with open(output_snv_file, 'w') as f:
+        json.dump(df_false_SNV.to_dict(orient='records'), f)
+
+    time.sleep(10)
+    with open(output_snv_file, 'r') as j:
+        snv_files = json.loads(j.read())
+
+    with open(output_indel_file, 'w') as f:
+        json.dump(df_false_indel.to_dict(orient='records'), f)
+
+    time.sleep(10)
+    with open(output_indel_file, 'r') as j:
+        indel_files = json.loads(j.read())
+
+    return Response({'snv': snv_files, 'indel': indel_files})
 
 
 
-
-
-
-### VUS format
-# import pandas as pd
-# import numpy as np
-# import json
-# snv_path='/content/CRCM3_CG_NS,FS,SGL_N_FOR_LIST_Report.xlsx'
-# indel_path= '/content/CRCM3_CG_NS,FS,SGL_B_FOR_LIST_Report.xlsx'
-# fda_path = '/content/fda_output_files.xlsx'
-# df_snv= pd.read_excel(snv_path,sheet_name='Cols Sorted')
-# df_indel= pd.read_excel(indel_path,sheet_name='Cols Sorted')
-# df_fda_result= pd.read_excel(fda_path,sheet_name='Sheet1')
-
-# df_snv.rename(columns = {'Gene.refGene':'GENE', 'AAChange':'AMINO_ACID_CHANGE'}, inplace = True)
-# df_snv
-
-
-# df_indel.rename(columns = {'Gene.refGene':'GENE', 'AAChange':'AMINO_ACID_CHANGE'}, inplace = True)
-# df_snv

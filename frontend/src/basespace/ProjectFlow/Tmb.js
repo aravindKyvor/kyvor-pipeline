@@ -4,6 +4,7 @@ import ReactSpeedometer from "react-d3-speedometer";
 
 const Tmb = () => {
   const [TMB, setTMB] = useState([]);
+  const[STATUS,setSTATUS]=useState([]);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     getTMB();
@@ -17,9 +18,11 @@ const Tmb = () => {
       }
     );
     let res = await response.json();
-
+    let tmb= res[0]
+    let status= res[1]
     console.log(res);
-    setTMB(res);
+    setTMB(tmb);
+    setSTATUS(status)
     setLoading(false);
   };
   return (
@@ -33,7 +36,7 @@ const Tmb = () => {
           minValue={0} //<---here
           maxValue={50}
           segments={3}
-          value={3.76923}
+          value={STATUS}
           width={307}
          height={250}
           segmentColors={["#FF0000", "#fec107", "#008000"]}
@@ -64,8 +67,8 @@ const Tmb = () => {
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
       <Card border="warning" style={{ width: "18rem" }}>
-          <Card.Header><strong>TMB Results : 3.76923 Mut/Mb</strong></Card.Header>
-          <Card.Header><strong>Status : Low</strong></Card.Header>
+          <Card.Header><strong>TMB Results : {STATUS} Mut/Mb</strong></Card.Header>
+          <Card.Header><strong>Status : {TMB}</strong></Card.Header>
          
         </Card>
       </div>

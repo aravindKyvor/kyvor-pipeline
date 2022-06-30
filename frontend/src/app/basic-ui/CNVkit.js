@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
-import { Link } from "react-router-dom";
+// import Table from "react-bootstrap/Table";
+// import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import FileViewer from 'react-file-viewer';
+// import FileViewer from 'react-file-viewer';
 
 import { Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,7 +11,7 @@ import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
-import readXlsxFile from 'read-excel-file'
+// import readXlsxFile from 'read-excel-file'
 
 
 toast.configure();

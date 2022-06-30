@@ -4,6 +4,7 @@ import ReactSpeedometer from "react-d3-speedometer";
 import { Card } from "react-bootstrap";
 const Msiflow = () => {
   const [MSI, setMSI] = useState([]);
+  const[MSI_STATUS,setMSI_STATUS] = useState([]);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
     getMSI();
@@ -17,9 +18,11 @@ const Msiflow = () => {
       }
     );
     let res = await response.json();
-
+    let msi= res.MSI
+    let status= res.STATUS
     console.log(res);
-    setMSI(res);
+    setMSI(msi);
+    setMSI_STATUS(status)
     setLoading(false);
   };
   return (
@@ -33,7 +36,7 @@ const Msiflow = () => {
           minValue={0} //<---here
           maxValue={100}
           segments={2}
-          value={2.63158}
+          value={MSI}
           shrink={false}
           width={307}
           height={250}
@@ -60,8 +63,8 @@ const Msiflow = () => {
 
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Card border="warning" style={{ width: "18rem" }}>
-          <Card.Header> <strong>MSI Results : MSI (2.63158)</strong> </Card.Header>
-          <Card.Header><strong>Status : Low</strong></Card.Header>
+          <Card.Header> <strong>MSI Results : MSI ({MSI})</strong> </Card.Header>
+          <Card.Header><strong>Status : {MSI_STATUS}</strong></Card.Header>
         </Card>
       </div>
     </div>

@@ -64,7 +64,7 @@ const Login = ({ login, isAuthenticated }) => {
                 <h4>Hello, welcome to Kyvor </h4>
                 <h6 className="font-weight-light">Sign in to continue.</h6>
                 <br />
-                {/* <Form onSubmit={(e) => onSubmit(e)}>
+                <Form onSubmit={(e) => onSubmit(e)}>
                 <Form.Group className="d-flex search-field">
                   <Form.Control
                     type="email"
@@ -103,7 +103,7 @@ const Login = ({ login, isAuthenticated }) => {
                 <div className="line-separator"></div>
                 <div className="or-label">or</div>
                 <div className="line-separator"></div>
-              </div> */}
+              </div>
                 <div className="pt-3">
                   <div className="mb-2">
                     <button

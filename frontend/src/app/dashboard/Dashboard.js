@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
 import { Link } from "react-router-dom";
-import axios, { post } from 'axios';
+// import axios, { post } from 'axios';
 import logo2 from "../../assets/images/dashboard/circle.svg";
 import logo3 from "../../assets/images/dashboard/circle.svg";
-import { Form } from "react-bootstrap";
+// import { Form } from "react-bootstrap";
 import { toast } from "react-toastify";
-import {Redirect} from 'react-router-dom';
+// import {Redirect} from 'react-router-dom';
 
 import "react-toastify/dist/ReactToastify.css";
 

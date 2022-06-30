@@ -1,7 +1,7 @@
 import React from "react";
-import { Modal } from "react-bootstrap";
+// import { Modal } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Tab, Tabs } from "react-bootstrap";
 import { Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,7 +14,8 @@ import GenomicSummary from "../../basespace/ProjectFlow/GenomicSummary";
 import Vus from "../../basespace/ProjectFlow/Vus";
 import Patientportal from "../../basespace/ProjectFlow/Patientportal";
 import MolecularProfile from "../../basespace/ProjectFlow/MolecularProfile";
-import TestRun from "../../basespace/ProjectFlow/Testrun";
+// import TestRun from "../../basespace/ProjectFlow/Testrun";
+import FinalReports from "../../basespace/ProjectFlow/FinalReports";
 import VusResults from "../../basespace/ProjectFlow/VusResults";
 const ReportsTable = (props) => {
   return (
@@ -106,8 +107,11 @@ const ReportsTable = (props) => {
           <Vus />
         </Tab>
         <br></br>
-        <Tab eventKey="VUS" title=" VUS">
+        <Tab eventKey="VUS" title="VUS">
          <VusResults/>
+        </Tab>
+        <Tab eventKey="FinalReports" title="FinalReports">
+         <FinalReports/>
         </Tab>
       </Tabs>
     </div>

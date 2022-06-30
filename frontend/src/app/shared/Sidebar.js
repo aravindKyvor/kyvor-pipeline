@@ -114,14 +114,14 @@ class Sidebar extends Component {
           </li>
           <li
             className={
-              this.isPathActive("/basic-ui/#") ? "nav-item active" : "nav-item"
+              this.isPathActive("/projectflow/finalReports") ? "nav-item active" : "nav-item"
             }
           >
-            <Link className="nav-link" to="/basic-ui/#">
+            <Link className="nav-link" to="/projectflow/finalReports">
               <span className="menu-title">
-               settings
+               Reports-PDF
               </span>
-              <i className="mdi mdi-settings menu-icon"></i>
+              <i className="mdi mdi-file-pdf menu-icon"></i>
             </Link>
           </li>
 

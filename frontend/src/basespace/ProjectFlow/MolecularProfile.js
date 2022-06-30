@@ -6,7 +6,9 @@ const MolecularProfile = () => {
   const [profile, setprofile] = useState([]);
   const [isLoading, setLoading] = useState(true);
   useEffect(() => {
+    // setInterval(function () {
     getprofile();
+  // }, 2000);
   }, []);
 
   let getprofile = async () => {

@@ -47,7 +47,11 @@ import TNProjectForm from "./TnProjectForm";
 import AnalysisForm from "./dashboard/AnalysisTO&TN";
 import Tnpipeline from "../basespace/ProjectFlow/Tnpipeline";
 import Vus from "../basespace/ProjectFlow/Vus";
-import Patient_add_form from "../basespace/ProjectFlow/Patient_add_form"
+import Patient_add_form from "../basespace/ProjectFlow/Patient_add_form";
+import DeResults from "../basespace/ProjectFlow/DeResults";
+import DspResults from "../basespace/ProjectFlow/DspResults";
+// import FinalReports from "../basespace/ProjectFlow/FinalReports";
+import PDFgeneration from "../basespace/ProjectFlow/PDFgeneration";
 class AppPrivateRoutes extends Component {
   render() {
     return (
@@ -117,10 +121,14 @@ class AppPrivateRoutes extends Component {
           <PrivateRoute path="/basic-ui/newproject" component={NewProject} />
           <PrivateRoute path="/basic-ui/analysi" component={ArticleDetail} />
           <PrivateRoute
-            
             path="/basic-ui/patient/form"
             component={Patient_add_form}
           />
+
+          <PrivateRoute path="/projectflow/DeResults" component={DeResults} />
+
+          <PrivateRoute path="/projectflow/DspResults" component={DspResults} />
+          <PrivateRoute path="/projectflow/finalReports" component={PDFgeneration} />
 
           {/* Basic ui Ends */}
 
@@ -219,8 +227,6 @@ class AppPrivateRoutes extends Component {
             path="/error-pages/error-500"
             component={Error500}
           />
-
-          
 
           <PrivateRoute path="/profile" component={Profile} />
         </Switch>

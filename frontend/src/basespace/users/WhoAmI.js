@@ -1,6 +1,5 @@
 import Form from "react-bootstrap/Form";
 import React, { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
 import { Link } from "react-router-dom";
 const WhoAmI = () => {
     let [applications, setApplications] = useState([]);

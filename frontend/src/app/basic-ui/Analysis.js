@@ -76,13 +76,13 @@ const Analysis = () => {
             style={{ backgroundColor: "#fec107" }}
           >
             <Link
-              to="/basic-ui/DSPcuration"
+              to="/projectflow/DspResults"
               style={{ color: "black", textDecoration: "none" }}
             >
               <div className="card-body">
                 {/* <img src="" className="card-img-absolute" alt="circle" /> */}
                 <h4 className="font-weight-normal mb-3 text-center">
-                  DSP Curation{" "}
+                  DSP Results{" "}
                 </h4>
               </div>
             </Link>
@@ -94,13 +94,13 @@ const Analysis = () => {
             style={{ backgroundColor: "#fec107" }}
           >
             <Link
-              to="/basic-ui/DEcuration"
+              to="/projectflow/DeResults"
               style={{ color: "black", textDecoration: "none" }}
             >
               <div className="card-body">
                 {/* <img src="" className="card-img-absolute" alt="circle" /> */}
                 <h4 className="font-weight-normal mb-3 text-center">
-                  DE Curation{" "}
+                  DE Results{" "}
                 </h4>
               </div>
             </Link>
