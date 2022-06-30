@@ -51,7 +51,8 @@ import Patient_add_form from "../basespace/ProjectFlow/Patient_add_form";
 import DeResults from "../basespace/ProjectFlow/DeResults";
 import DspResults from "../basespace/ProjectFlow/DspResults";
 // import FinalReports from "../basespace/ProjectFlow/FinalReports";
-import PDFgeneration from "../basespace/ProjectFlow/PDFgeneration";
+// import PDFgeneration from "../basespace/ProjectFlow/PDFgeneration";
+import PDFGENE from '../basespace/PdfGeneration/PDFGENE'
 class AppPrivateRoutes extends Component {
   render() {
     return (
@@ -128,7 +129,7 @@ class AppPrivateRoutes extends Component {
           <PrivateRoute path="/projectflow/DeResults" component={DeResults} />
 
           <PrivateRoute path="/projectflow/DspResults" component={DspResults} />
-          <PrivateRoute path="/projectflow/finalReports" component={PDFgeneration} />
+          <PrivateRoute path="/projectflow/finalReports" component={PDFGENE} />
 
           {/* Basic ui Ends */}
 

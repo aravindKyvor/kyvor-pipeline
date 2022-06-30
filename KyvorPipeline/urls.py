@@ -22,7 +22,10 @@ router.register(r'projects', views.ProjectViewSet)
 router.register(r'biosamples', views.BiosampleViewSet)
 router.register(r'analysis', views.AnalysisViewSet)
 router.register(r'portal', views.Patient_Portal)
-
+router.register(r'fda',views.FDA_DATABASE)
+router.register(r'clinicaldata',views.ClinicalDatabases)
+router.register(r'snv_database',views.SNVdatabase)
+router.register(r'indel_database',views.INDELdatabase)
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -75,6 +78,13 @@ urlpatterns = [
     path('processed_file/', views.process_clilical_files),
     path('fda_filtered_sheets/', views.fad_sheet_filters),
     path('vus_results/',views.vus_results),
+    path('genes_variants/',views.Genes_Variants_Cancertypes),
+    path('de_results/',views.de_results),
+    path('dsp_results/',views.DSP_results),
+    path('patient_ids/',views.patient_ids),
+    path('fda_database_results/',views.FDA_automated_results)
+
+    
 
     
 

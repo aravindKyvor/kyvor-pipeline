@@ -2521,6 +2521,8 @@ def curation(inputfile, cosdata, cgcdata, tnpatientfile,appname,dbdata):
              newcvc_indata_wosyn_y2, newcvc_indata_wosyn_n2, newcvc_indata_wosyn_b2, newcvc_indata_wosyn_wc2,
              newcvc_indata_wosyn_nm2], sort=False)
 
+        
+
         # # Msk_tumor supressor genes
         # msk_GENES = pd.read_excel(io=dbdata, sheet_name='MSK-Genes')
         # msk_tumsupgene_merg = pd.merge(indata_dbinput, msk_GENES, left_on=['Gene.refGene'], right_on=['Hugo Symbol'],

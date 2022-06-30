@@ -203,7 +203,7 @@ class ClinicalStudies extends React.Component {
     const { isLoading } = this.state;
     const ClinicalData = this.state.data;
     const rows = ClinicalData.map((application) => (
-      <div>
+      <React.Fragment>
         <tr key={application.id}>
 
           <td rowspan="2">
@@ -256,7 +256,7 @@ class ClinicalStudies extends React.Component {
             {application.official_title}
           </td>
         </tr>
-      </div>
+        </React.Fragment>
     ));
     return (
 
@@ -281,12 +281,12 @@ class ClinicalStudies extends React.Component {
                         Clinical & Case Studies                      </h4>
 
                       <hr />
-                      <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                      
                         <div className="table-responsive">
                           <table className="table table-bordered">
 
                             <thead style={{ backgroundColor: "#fec107" }}>
-                              <div>
+                             
                                 <tr>
                                   <th style={{ backgroundColor: "#fec107" }}>
                                     #
@@ -306,11 +306,11 @@ class ClinicalStudies extends React.Component {
                                   </th>
                                   <th style={{ backgroundColor: "#fec107" }}>Reference</th>
                                 </tr>
-                              </div>
+                              
                             </thead>
                             <tbody>{rows}</tbody>
                           </table>
-                        </div>
+                     
                       </div>
                     </div>
                   </div>

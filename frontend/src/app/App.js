@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import "./App.scss";
+import '../index.css'
 import Layout from "../Hocs/Layout";
 import { Provider } from "react-redux";
 import store from "../store";

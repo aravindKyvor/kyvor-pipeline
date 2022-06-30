@@ -4,7 +4,8 @@ const GenomicSummary = () => {
   return (
     <div>
       <div className="page-header">
-        <h3 className="page-title"> Predictive Biomarkers </h3>
+        <h3 className="page-title" style={{textAlign: 'center'}}>       Predictive Biomarkers  <strong>
+          </strong>  </h3>
       </div>
 
       <div className="col-md-12 grid-margin">

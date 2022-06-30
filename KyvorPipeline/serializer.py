@@ -32,3 +32,28 @@ class PortalSerializer(serializers.ModelSerializer):
     class Meta: 
         model= PatientPortal
         fields='__all__'
+        
+        
+        
+class FDA_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model= FDA_Sheets
+        fields='__all__'
+
+
+class ClinicalDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Clinical_DATA
+        fields='__all__'
+
+class SNVDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=SNV_datas
+        fields='__all__'
+
+
+
+class INDELDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=INDEL_datas
+        fields='__all__'

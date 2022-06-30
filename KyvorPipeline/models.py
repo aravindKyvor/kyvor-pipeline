@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+import uuid
 
 # Create your models here.
 class Basespace(models.Model):
@@ -87,3 +88,69 @@ class PatientPortal(models.Model):
 
 
 
+
+
+
+class FDAReports(models.Model):
+    Genes = models.CharField(max_length= 100)
+    variants = models.CharField(max_length= 200)
+    cancer_types = models.CharField(max_length= 500)
+    
+    
+    
+    
+    
+    
+class FDA_Sheets(models.Model):
+        id= models.IntegerField(primary_key=True,null=False, blank=False)
+        GENE = models.CharField(max_length=200,null=True, blank=True)
+        BIOMARKER=models.CharField(max_length=200,null=True, blank=True)
+        VARIANT_CDS=models.CharField(max_length=200,null=True, blank=True)
+        THERAPY=models.TextField()
+        EVIDENCE_STATEMENT_1=models.TextField()
+        EVIDENCE_STATEMENT_2=models.TextField()
+        Status=models.CharField(max_length=200,null=True, blank=True)
+        AF_VAF=models.CharField(max_length=200,null=True, blank=True)
+        CANCER_TYPES=models.CharField(max_length=800,null=True, blank=True)
+        
+        
+        
+class Clinical_DATA(models.Model):
+    id= models.IntegerField(primary_key=True,null=False, blank=False)
+    nct_id=models.CharField(max_length=200,null=True, blank=True)
+    official_title=models.TextField()
+    intervention=models.TextField()
+    variant_found=models.CharField(max_length=200,null=True, blank=True)
+    url=models.URLField(max_length=2000,null=True, blank=True)
+    BioMarker=models.CharField(max_length=200,null=True, blank=True)
+    
+    Reference=models.TextField()
+    GENE=models.CharField(max_length=200,null=True, blank=True)
+    
+    VARIANT=models.CharField(max_length=200,null=True, blank=True)
+    VARIANT_CDS=models.CharField(max_length=200,null=True, blank=True)
+    THERAPY=models.TextField()
+    EVIDENCE_STATEMENT_1=models.TextField()
+    EVIDENCE_STATEMENT_2=models.TextField()
+    Status=models.CharField(max_length=200,null=True, blank=True)
+    AF_VAF=models.CharField(max_length=200,null=True, blank=True)
+    
+    CANCER_TYPES=models.CharField(max_length=200,null=True, blank=True)
+    
+    
+    
+
+class SNV_datas(models.Model):
+    id= models.IntegerField(primary_key=True,null=False, blank=False)
+    GENE=models.CharField(max_length=400,null=True, blank=True)
+    AMINO_ACID_CHANGE=models.CharField(max_length=500,null=True, blank=True)
+    CDS=models.CharField(max_length=500,null=True, blank=True)
+
+
+
+
+class INDEL_datas(models.Model):
+    id= models.IntegerField(primary_key=True,null=False, blank=False)
+    GENE=models.CharField(max_length=400,null=True, blank=True)
+    AMINO_ACID_CHANGE=models.CharField(max_length=500,null=True, blank=True)
+    CDS=models.CharField(max_length=500,null=True, blank=True)
